@@ -14,26 +14,21 @@ import kotlin.concurrent.thread
 @Suppress("MemberVisibilityCanBePrivate")
 class Console : AppCompatActivity() {
 
-//    private var recycler: RecyclerView? = null
-//    private var manager: RecyclerView.LayoutManager? = null
-//    private var adapter: Adapter? = null
-//    private val list = ArrayList<String>()
-
     var console: ConsoleSession? = null
 
     fun clear(@Suppress("UNUSED_PARAMETER") view: View) = console?.clear()
     @Suppress("SpellCheckingInspection")
     fun exe(@Suppress("UNUSED_PARAMETER") view: View) = try {
-        for (i in 0..250) {
-            console?.println("$i")
-            sleep(250)
-        }
+//        for (i in 0..250) {
+        console?.println("16ms")
+//            sleep(250)
+//        }
 //        val cmd = "stty -a"
 //        val cmdwhite = "printf \\\\e[?5h"
 //        val cmdblack = "printf \\\\e[?5l"
 //        console?.println("executing command: $cmd")
 //        val p = ProcessBuilder("myCommand", "myArg")
-////        val pro = p.start()
+//        val pro = p.start()
 //        Runtime.getRuntime().exec("stty -a").also {
 //            it.inputStream.bufferedReader().useLines { it.forEach { console?.println("stdout: $it") } }
 //            it.errorStream.bufferedReader().useLines { it.forEach { console?.println("stderr: $it") } }
@@ -67,12 +62,7 @@ class Console : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        console?.println("sleeping for 10 seconds in a thread")
-        thread {
-            sleep(10000)
-            console?.println("onResume")
-            console?.println("onResume appended")
-        }
+        console?.println("onResume")
     }
 
     override fun onPause() {
