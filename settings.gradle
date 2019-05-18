@@ -1,1 +1,1 @@
-include ':app', ':TermViewUpdateSpeedBenchmark', ':benchmark'
+include ':app', ':TermViewUpdateSpeedBenchmark', ':benchmark', ':benchmark', ':benchmark'
