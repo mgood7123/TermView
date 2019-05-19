@@ -1,15 +1,36 @@
+@file:Suppress("unused")
+
 package com.example.TermView
 
+import android.app.Activity
+import android.arch.lifecycle.Lifecycle
 import android.util.Log
+import android.view.ViewGroup
+import android.widget.ScrollView
 import com.utils.`class`.extensions.ThreadWaitForCompletion
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import kotlinx.android.synthetic.main.activity_console.*
 import preprocessor.utils.`class`.extensions.ifConditionReturn
 import java.io.File
 import kotlin.concurrent.thread
 
-@Suppress("MemberVisibilityCanBePrivate", "unused")
+fun ConsoleSessionInit(activity: Activity, lifecycle: Lifecycle, viewGroup: ViewGroup, stability: Int): ConsoleSession {
+    val t = Terminal().termView(activity)
+    viewGroup.addView(t)
+    val console = ConsoleSession(activity, t.getChildAt(0) as Terminal.FontFitTextView, t)
+    console!!.stability = stability
+    lifecycle.addObserver(ConsoleUpdater(console))
+    if (console.stability == ConsoleSession.Stability.FAST ||
+        console.stability == ConsoleSession.Stability.NORMAL) {
+        console.load()
+    }
+    return console
+}
+
+@Suppress("MemberVisibilityCanBePrivate")
 class ConsoleSession(
+    val activity: Activity,
     val output: Terminal.FontFitTextView,
     val screen: Terminal.Zoomable
 ) {
@@ -43,24 +64,47 @@ class ConsoleSession(
     fun CharSequence.updateOverwrite() = this.toString().updateOverwrite()
 
     fun String.update() {
-        ThreadWaitForCompletion(output.mainThread!!) {
+        ThreadWaitForCompletion(activity) {
             output.append(this)
-            scrollDown(screen)
+            scrollDown(activity, screen)
         }
     }
 
     fun String.updateOverwrite() {
-        ThreadWaitForCompletion(output.mainThread!!) {
+        ThreadWaitForCompletion(activity) {
             output.text = this
-            scrollDown(screen)
+            scrollDown(activity, screen)
         }
     }
 
     fun clear() {
-        if (stability == Stability.NORMAL) load()
-        "".updateOverwrite()
-        if (stability == Stability.NORMAL) save()
-        if (stability == Stability.NORMAL) unload()
+        if (stability == Stability.FAST) {
+            thread {
+                // make sure we can still safely print if the REALM is unloaded
+                var tmp = false
+                if (!initialized) {
+                    tmp = true
+                    load()
+                }
+                "".updateOverwrite()
+                if (tmp) {
+                    save()
+                    unload()
+                }
+                Thread.sleep(16)
+            }
+        } else if (stability == Stability.NORMAL || stability == Stability.STABLE) {
+            var tmp = false
+            if (stability == Stability.STABLE || !initialized) {
+                if (!initialized) tmp = true
+                load()
+            }
+            "".updateOverwrite()
+            if (stability == Stability.STABLE || tmp) {
+                save()
+                unload()
+            }
+        }
     }
 
     // loading on every print may produce large overhead on print intensive tasks,
@@ -107,9 +151,9 @@ class ConsoleSession(
         if (initialized) return
         Log.i("REALM", "load started")
         // print cannot be used in this call
-        if (!initialized) Realm.init(output.mainThread?.applicationContext)
+        if (!initialized) Realm.init(activity.applicationContext)
         for (it in session_id) {
-            val path = "${output.mainThread?.filesDir}/$session$it"
+            val path = "${activity.filesDir}/$session$it"
             if (File(path).exists()) {
                 Log.i("REALM", "configuration exists")
                 config = RealmConfiguration.Builder()
@@ -138,7 +182,7 @@ class ConsoleSession(
             initialized = true
             Log.i(
                 "REALM",
-                "configuration created: $session${session_id[0]} at ${output.mainThread?.filesDir.toString()}/$session${session_id[0]}"
+                "configuration created: $session${session_id[0]} at ${activity.filesDir.toString()}/$session${session_id[0]}"
             )
         }
         Log.i("REALM", "load finished")

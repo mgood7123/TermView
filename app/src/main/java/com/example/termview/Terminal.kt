@@ -142,15 +142,9 @@ class Terminal {
     }
 
     inner class Zoomable : ScrollView {
-        constructor(context: Context) : super(context) {
-            mainThread = context as Activity
-        }
+        constructor(context: Context) : super(context)
 
-        constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-            mainThread = context as Activity
-        }
-
-        var mainThread: Activity? = null
+        constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
         private var mScaleFactor = 1f
         private val scaleListener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -238,10 +232,6 @@ class Terminal {
             super.onSizeChanged(w, h, oldw, oldh)
         }
 
-        override fun onDraw(canvas: Canvas?) {
-            val child = getChildAt(0) as FontFitTextView
-            super.onDraw(canvas)
-        }
 
         override fun onTouchEvent(ev: MotionEvent): Boolean {
             // Let the ScaleGestureDetector inspect all events.

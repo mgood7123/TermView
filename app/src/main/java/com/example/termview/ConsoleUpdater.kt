@@ -5,11 +5,12 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
 import android.view.View
+import android.widget.ScrollView
 import kotlin.concurrent.thread
 
 @Suppress("unused")
-fun scrollDown(scrollView: Terminal.Zoomable) = thread {
-    scrollView.mainThread?.runOnUiThread {
+fun scrollDown(activity: Activity, scrollView: Terminal.Zoomable) = thread {
+    activity.runOnUiThread {
         // in java, the code to be executed is required to be encapsulated in
         // new Runnable() { public void run() { <CODE> } }
         // in kotlin, this does NOT work and will fail

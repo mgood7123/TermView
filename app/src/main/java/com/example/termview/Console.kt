@@ -70,19 +70,7 @@ class Console : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_console)
-
-        val t = Terminal().termView(this)
-        Terminal.addView(t)
-        if (console == null) {
-            console = ConsoleSession(t.getChildAt(0) as Terminal.FontFitTextView, t)
-            console!!.stability = ConsoleSession.Stability.NORMAL
-            lifecycle.addObserver(ConsoleUpdater(console!!))
-        }
-        val consoleSession = console!!
-        if (consoleSession.stability == ConsoleSession.Stability.FAST ||
-            consoleSession.stability == ConsoleSession.Stability.NORMAL) {
-            consoleSession.load()
-        }
+        console = ConsoleSessionInit(this, lifecycle, Terminal, ConsoleSession.Stability.NORMAL)
         console?.println("onCreate")
     }
 
