@@ -136,50 +136,20 @@ class SessionManager(val activity: Activity) {
             Log.i(TAG, "save started")
             val consoleRealm = CRO.realm
             consoleRealm?.beginTransaction()
-//            Log.i(TAG, "saving '${output.text.toString()}' to configuration")
             CRO.stdout = output.text.toString()
             consoleRealm?.commitTransaction()
             Log.i(TAG, "save finished")
-
-        }
-//        if (!initialized) {
-//            Log.i(TAG, "tried to save when already unloaded")
-//            return
-//        }
-//
-//        if (consoleRealm!!.isClosed) {
-//            Log.i(
-//                TAG,
-//                initialized.ifConditionReturn(
-//                    TRUE = { "tried to save when initialized however the current REALM is unloaded" },
-//                    FALSE = { "tried to save when already unloaded" })
-//            )
-//            return
-//        }
+        } else Log.i(TAG, "tried to save but session is not running")
     }
 
     fun unload(CRO: ConsoleRealmObject) {
-//        if (!initialized) {
-//            Log.i(TAG, "tried to unload when already unloaded")
-//            return
-//        }
-//
-//        if (consoleRealm!!.isClosed) {
-//            Log.i(
-//                TAG,
-//                initialized.ifConditionReturn(
-//                    TRUE = { "tried to unload when initialized however the current REALM is unloaded" },
-//                    FALSE = { "tried to unload when already unloaded" })
-//            )
-//            return
-//        }
         if (sessionIsRunning(sessionCurrent)) {
             Log.i(TAG, "unload started")
             CRO.realm.close()
             File("$FILESDIRASASTRING/${sessionCurrent!!}.running").delete()
             sessionCurrent = null
             Log.i(TAG, "unload finished")
-        }
+        } else Log.i(TAG, "tried to unload but session is not running")
     }
 
 }

@@ -39,7 +39,9 @@ class ConsoleSession(
     var CRO: ConsoleRealmObject? = null
     fun load() {
         CRO = SM.load()
+        CRO!!.stdout.updateOverwrite()
     }
+
     fun save() = SM.save(CRO!!, output)
     fun unload() = SM.unload(CRO!!)
 
