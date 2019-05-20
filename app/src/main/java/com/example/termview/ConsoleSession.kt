@@ -25,7 +25,7 @@ fun ConsoleSessionInit(activity: Activity, lifecycle: Lifecycle, viewGroup: View
     Realm.init(activity)
     if (console.stability == ConsoleSession.Stability.FAST ||
         console.stability == ConsoleSession.Stability.NORMAL) {
-        console.SM.load()
+        console.load()
     }
     return console
 }
@@ -36,6 +36,12 @@ class ConsoleSession(
     val output: Terminal.FontFitTextView,
     val screen: Terminal.Zoomable
 ) {
+    var CRO: ConsoleRealmObject? = null
+    fun load() {
+        CRO = SM.load()
+    }
+    fun save() = SM.save(CRO!!, output)
+    fun unload() = SM.unload(CRO!!)
 
     open class Stability {
 
@@ -78,12 +84,12 @@ class ConsoleSession(
                 var tmp = false
                 if (!SM.sessionIsRunning(SM.sessionCurrent)) {
                     tmp = true
-                    SM.load()
+                    load()
                 }
                 "".updateOverwrite()
                 if (tmp) {
-                    SM.save()
-                    SM.unload()
+                    save()
+                    unload()
                 }
                 Thread.sleep(16)
             }
@@ -91,12 +97,12 @@ class ConsoleSession(
             var tmp = false
             if (stability == Stability.STABLE || !SM.sessionIsRunning(SM.sessionCurrent)) {
                 if (!SM.sessionIsRunning(SM.sessionCurrent)) tmp = true
-                SM.load()
+                load()
             }
             "".updateOverwrite()
             if (stability == Stability.STABLE || tmp) {
-                SM.save()
-                SM.unload()
+                save()
+                unload()
             }
         }
     }
@@ -115,12 +121,12 @@ class ConsoleSession(
                 var tmp = false
                 if (!SM.sessionIsRunning(SM.sessionCurrent)) {
                     tmp = true
-                    SM.load()
+                    load()
                 }
                 message.update()
                 if (tmp) {
-                    SM.save()
-                    SM.unload()
+                    save()
+                    unload()
                 }
                 Thread.sleep(16)
             }
@@ -128,12 +134,12 @@ class ConsoleSession(
             var tmp = false
             if (stability == Stability.STABLE || !SM.sessionIsRunning(SM.sessionCurrent)) {
                 if (!SM.sessionIsRunning(SM.sessionCurrent)) tmp = true
-                SM.load()
+                load()
             }
             message.update()
             if (stability == Stability.STABLE || tmp) {
-                SM.save()
-                SM.unload()
+                save()
+                unload()
             }
         }
     }

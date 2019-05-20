@@ -129,13 +129,13 @@ class Terminal {
         }
 
         override fun append(text: CharSequence?, start: Int, end: Int) {
-            Log.i(com.utils.StackTraceInfo().invokingMethodName, "appending '$text' to '${this.text}'")
+//            Log.i(com.utils.StackTraceInfo().invokingMethodName, "appending '$text' to '${this.text}'")
             super.append(text, start, end)
         }
 
         override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
             super.onTextChanged(text, start, lengthBefore, lengthAfter)
-            Log.i(com.utils.StackTraceInfo().invokingMethodName, "text updated to '$text'")
+//            Log.i(com.utils.StackTraceInfo().invokingMethodName, "text updated to '$text'")
             DRAWTHREAD()
             // TODO: reformat text due to wrapping and text size in order to wrap correctly
         }

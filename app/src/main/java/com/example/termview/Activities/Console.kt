@@ -116,7 +116,7 @@ class Console : AppCompatActivity() {
         val consoleSession = console!!
         if (consoleSession.stability == ConsoleSession.Stability.FAST ||
             consoleSession.stability == ConsoleSession.Stability.NORMAL) {
-            consoleSession.SM.load()
+            consoleSession.load()
         }
         console?.println("onResume")
     }
@@ -126,8 +126,8 @@ class Console : AppCompatActivity() {
         val consoleSession = console!!
         if (consoleSession.stability == ConsoleSession.Stability.FAST ||
             consoleSession.stability == ConsoleSession.Stability.NORMAL) {
-            consoleSession.SM.save()
-            consoleSession.SM.unload()
+            consoleSession.save()
+            consoleSession.unload()
         }
         console?.println("onPause")
     }

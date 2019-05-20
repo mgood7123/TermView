@@ -68,6 +68,25 @@ class SessionManager(val activity: Activity) {
             return sessionsFree
         }
 
+    val sessionsNextAvailable: String
+        get() {
+            var next = 0
+            var ret: String? = null
+            for (it in sessions) {
+                val base = "${it.toString().dropLast(1)}$next"
+                val full = "$FILESDIRASASTRING/$base"
+                if (!File(full).exists()) {
+                    ret = baseName(full)
+                    break
+                }
+                next++
+            }
+            if (ret == null) {
+                ret = "$prefix$next"
+            }
+            return ret
+        }
+
     var sessionCurrent: String? = null
 
     fun sessionIsRunning(session: String?): Boolean = if (session != null)
@@ -89,7 +108,13 @@ class SessionManager(val activity: Activity) {
             val fs = sessionsFree
             if (fs.isEmpty()) {
                 Log.i(TAG, "no free sessions found")
-                TODO()
+                c = sessionsNextAvailable
+                var config = RealmConfiguration.Builder()
+                    .name(c)
+                    .schemaVersion(ConsoleRealmObjectVersion)
+                    .build()
+                Realm.setDefaultConfiguration(config!!)
+                Log.i(TAG, "configuration created: $c at $FILESDIRASASTRING/$c")
             } else c = fs.last().toString()
             Log.i(TAG, "using session '$c'")
             val config = RealmConfiguration.Builder()
@@ -148,11 +173,13 @@ class SessionManager(val activity: Activity) {
 //            )
 //            return
 //        }
-        Log.i(TAG, "unload started")
-        CRO.realm.close()
-        File("$FILESDIRASASTRING/${sessionCurrent!!}.running").delete()
-        sessionCurrent = null
-        Log.i(TAG, "unload finished")
+        if (sessionIsRunning(sessionCurrent)) {
+            Log.i(TAG, "unload started")
+            CRO.realm.close()
+            File("$FILESDIRASASTRING/${sessionCurrent!!}.running").delete()
+            sessionCurrent = null
+            Log.i(TAG, "unload finished")
+        }
     }
 
 }
