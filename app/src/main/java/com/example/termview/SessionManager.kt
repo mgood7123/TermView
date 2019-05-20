@@ -136,7 +136,7 @@ class SessionManager(val activity: Activity) {
             Log.i(TAG, "save started")
             val consoleRealm = CRO.realm
             consoleRealm?.beginTransaction()
-            Log.i(TAG, "saving '${output.text.toString()}' to configuration")
+//            Log.i(TAG, "saving '${output.text.toString()}' to configuration")
             CRO.stdout = output.text.toString()
             consoleRealm?.commitTransaction()
             Log.i(TAG, "save finished")
