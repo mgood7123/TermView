@@ -119,7 +119,7 @@ class Terminal {
                             DRAW()
                             break
                         }
-                        Log.i(FUN, "NOT READY")
+//                        Log.i(FUN, "NOT READY")
                         Thread.sleep(16)
                     }
                 }

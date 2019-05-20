@@ -1,29 +1,51 @@
 @file:Suppress("unused")
 
-package com.example.TermView
+package com.example.termview.Activities
 
 import android.os.Bundle
 import android.os.SystemClock.sleep
 import android.support.v7.app.AppCompatActivity
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
+import com.example.TermView.ConsoleSession
+import com.example.TermView.ConsoleSessionInit
 import com.example.termview.R
-import com.example.termview.utils.`class`.extensions.minute
-import com.example.termview.utils.`class`.extensions.second
-import com.utils.`class`.extensions.ThreadWaitForCompletion
 import kotlinx.android.synthetic.main.activity_console.*
 import kotlin.concurrent.thread
 import kotlin.system.measureTimeMillis
 
 
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "KDocMissingDocumentation")
 class Console : AppCompatActivity() {
 
     var console: ConsoleSession? = null
 
-    fun clear(@Suppress("UNUSED_PARAMETER") view: View) = console?.clear()
-    @Suppress("SpellCheckingInspection")
-    fun exe(@Suppress("UNUSED_PARAMETER") view: View) = try {
-        // dont block the UI thread
+    @Suppress("KDocMissingDocumentation")
+    fun clear(@Suppress("UNUSED_PARAMETER") view: View) {
+        val popUp: PopupWindow = PopupWindow(this)
+        val layout: LinearLayout = LinearLayout(this)
+        layout.orientation = LinearLayout.VERTICAL
+        popUp.contentView = layout
+        popUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
+        popUp.update(50, 50, 1000, 1000)
+        val console = ConsoleSessionInit(
+            this,
+            lifecycle,
+            layout,
+            ConsoleSession.Stability.STABLE
+        )
+        console.println("onCreate")
+//        popUp.dismiss()
+    }
+
+    @Suppress("KDocMissingDocumentation")
+    fun exe(@Suppress("UNUSED_PARAMETER") view: View): Any = try {
+        // don't block the UI thread
         thread {
             fun sample(code: () -> Unit) {
                 val time = measureTimeMillis {
@@ -70,7 +92,12 @@ class Console : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_console)
-        console = ConsoleSessionInit(this, lifecycle, Terminal, ConsoleSession.Stability.NORMAL)
+        console = ConsoleSessionInit(
+            this,
+            lifecycle,
+            Terminal,
+            ConsoleSession.Stability.STABLE
+        )
         console?.println("onCreate")
     }
 
@@ -89,7 +116,7 @@ class Console : AppCompatActivity() {
         val consoleSession = console!!
         if (consoleSession.stability == ConsoleSession.Stability.FAST ||
             consoleSession.stability == ConsoleSession.Stability.NORMAL) {
-            consoleSession.load()
+            consoleSession.SM.load()
         }
         console?.println("onResume")
     }
@@ -99,8 +126,8 @@ class Console : AppCompatActivity() {
         val consoleSession = console!!
         if (consoleSession.stability == ConsoleSession.Stability.FAST ||
             consoleSession.stability == ConsoleSession.Stability.NORMAL) {
-            consoleSession.save()
-            consoleSession.unload()
+            consoleSession.SM.save()
+            consoleSession.SM.unload()
         }
         console?.println("onPause")
     }

@@ -13,7 +13,7 @@
                  android:resizeableActivity="true"
     >
         <activity
-                android:name="com.example.TermView.Console"
+                android:name=".Activities.Console"
                 android:configChanges="orientation|screenSize"
                 android:label="TermView"
                 android:theme="@style/Theme.AppCompat.NoActionBar">

@@ -7,6 +7,7 @@ import android.arch.lifecycle.Lifecycle
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.ScrollView
+import com.example.termview.SessionManager
 import com.utils.`class`.extensions.ThreadWaitForCompletion
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -19,16 +20,17 @@ fun ConsoleSessionInit(activity: Activity, lifecycle: Lifecycle, viewGroup: View
     val t = Terminal().termView(activity)
     viewGroup.addView(t)
     val console = ConsoleSession(activity, t.getChildAt(0) as Terminal.FontFitTextView, t)
-    console!!.stability = stability
+    console.stability = stability
     lifecycle.addObserver(ConsoleUpdater(console))
+    Realm.init(activity)
     if (console.stability == ConsoleSession.Stability.FAST ||
         console.stability == ConsoleSession.Stability.NORMAL) {
-        console.load()
+        console.SM.load()
     }
     return console
 }
 
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "KDocMissingDocumentation")
 class ConsoleSession(
     val activity: Activity,
     val output: Terminal.FontFitTextView,
@@ -50,15 +52,7 @@ class ConsoleSession(
         val stdin = ""
     }
 
-    var session_id = mutableListOf(0)
-
-    var config: RealmConfiguration? = null
-
-    var session = "session"
-
-    var consoleRealm: Realm? = null
-
-    var initialized = false
+    val SM = SessionManager(activity)
 
     fun CharSequence.update() = this.toString().update()
     fun CharSequence.updateOverwrite() = this.toString().updateOverwrite()
@@ -82,27 +76,27 @@ class ConsoleSession(
             thread {
                 // make sure we can still safely print if the REALM is unloaded
                 var tmp = false
-                if (!initialized) {
+                if (!SM.sessionIsRunning(SM.sessionCurrent)) {
                     tmp = true
-                    load()
+                    SM.load()
                 }
                 "".updateOverwrite()
                 if (tmp) {
-                    save()
-                    unload()
+                    SM.save()
+                    SM.unload()
                 }
                 Thread.sleep(16)
             }
         } else if (stability == Stability.NORMAL || stability == Stability.STABLE) {
             var tmp = false
-            if (stability == Stability.STABLE || !initialized) {
-                if (!initialized) tmp = true
-                load()
+            if (stability == Stability.STABLE || !SM.sessionIsRunning(SM.sessionCurrent)) {
+                if (!SM.sessionIsRunning(SM.sessionCurrent)) tmp = true
+                SM.load()
             }
             "".updateOverwrite()
             if (stability == Stability.STABLE || tmp) {
-                save()
-                unload()
+                SM.save()
+                SM.unload()
             }
         }
     }
@@ -119,118 +113,31 @@ class ConsoleSession(
             thread {
                 // make sure we can still safely print if the REALM is unloaded
                 var tmp = false
-                if (!initialized) {
+                if (!SM.sessionIsRunning(SM.sessionCurrent)) {
                     tmp = true
-                    load()
+                    SM.load()
                 }
                 message.update()
                 if (tmp) {
-                    save()
-                    unload()
+                    SM.save()
+                    SM.unload()
                 }
                 Thread.sleep(16)
             }
         } else if (stability == Stability.NORMAL || stability == Stability.STABLE) {
             var tmp = false
-            if (stability == Stability.STABLE || !initialized) {
-                if (!initialized) tmp = true
-                load()
+            if (stability == Stability.STABLE || !SM.sessionIsRunning(SM.sessionCurrent)) {
+                if (!SM.sessionIsRunning(SM.sessionCurrent)) tmp = true
+                SM.load()
             }
             message.update()
             if (stability == Stability.STABLE || tmp) {
-                save()
-                unload()
+                SM.save()
+                SM.unload()
             }
         }
     }
 
     fun println(message: String) = print(message + "\n")
-
-    fun load() {
-        // do not load multiple times
-        if (initialized) return
-        Log.i("REALM", "load started")
-        // print cannot be used in this call
-        if (!initialized) Realm.init(activity.applicationContext)
-        for (it in session_id) {
-            val path = "${activity.filesDir}/$session$it"
-            if (File(path).exists()) {
-                Log.i("REALM", "configuration exists")
-                config = RealmConfiguration.Builder()
-                    .name("$session$it")
-                    .schemaVersion(ConsoleRealmObjectVersion)
-                    .migration(MigrateConsole())
-                    .build()
-
-                Realm.setDefaultConfiguration(config!!)
-                consoleRealm = Realm.getDefaultInstance()
-                consoleRealmObjectInstance(consoleRealm!!).stdout.updateOverwrite()
-                initialized = true
-                Log.i("REALM", "configuration initialized: $session$it at $path")
-                break
-            }
-        }
-        if (config == null) {
-            Log.i("REALM", "configuration does not exist")
-            config = RealmConfiguration.Builder()
-                .name("$session${session_id[0]}")
-                .schemaVersion(ConsoleRealmObjectVersion)
-                .build()
-            Realm.setDefaultConfiguration(config!!)
-            consoleRealm = Realm.getDefaultInstance()
-            consoleRealmObjectInstance(consoleRealm!!).stdout.updateOverwrite()
-            initialized = true
-            Log.i(
-                "REALM",
-                "configuration created: $session${session_id[0]} at ${activity.filesDir.toString()}/$session${session_id[0]}"
-            )
-        }
-        Log.i("REALM", "load finished")
-    }
-
-    fun save() {
-        if (!initialized) {
-            Log.i("REALM", "tried to save when already unloaded")
-            return
-        }
-
-        if (consoleRealm!!.isClosed) {
-            Log.i(
-                "REALM",
-                initialized.ifConditionReturn(
-                    TRUE = { "tried to save when initialized however the current REALM is unloaded" },
-                    FALSE = { "tried to save when already unloaded" })
-            )
-            return
-        }
-        Log.i("REALM", "save started")
-        val consoleRealmObject = consoleRealmObjectInstance(consoleRealm!!)
-        consoleRealm?.beginTransaction()
-        Log.i("REALM", "saving '${output.text.toString()}' to configuration")
-        consoleRealmObject.stdout = output.text.toString()
-        consoleRealm?.commitTransaction()
-        Log.i("REALM", "save finished")
-    }
-
-    fun unload() {
-        if (!initialized) {
-            Log.i("REALM", "tried to unload when already unloaded")
-            return
-        }
-
-        if (consoleRealm!!.isClosed) {
-            Log.i(
-                "REALM",
-                initialized.ifConditionReturn(
-                    TRUE = { "tried to unload when initialized however the current REALM is unloaded" },
-                    FALSE = { "tried to unload when already unloaded" })
-            )
-            return
-        }
-        Log.i("REALM", "unload started")
-        consoleRealm?.close()
-        initialized = false
-        Log.i("REALM", "unload finished")
-    }
 
 }
