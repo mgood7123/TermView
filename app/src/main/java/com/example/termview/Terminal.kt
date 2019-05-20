@@ -1,8 +1,7 @@
-package com.example.TermView
+package com.example.termview
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.Layout
@@ -111,7 +110,6 @@ class Terminal {
         fun DRAWTHREAD() {
             if (!mStarted) {
                 mStarted = true
-                val FUN = com.utils.StackTraceInfo().currentMethodName
                 mUpdateThread = thread {
                     while (true) {
                         if (ready) {
@@ -119,7 +117,6 @@ class Terminal {
                             DRAW()
                             break
                         }
-//                        Log.i(FUN, "NOT READY")
                         Thread.sleep(16)
                     }
                 }
@@ -262,7 +259,6 @@ class Terminal {
             it.hyphenationFrequency = Layout.HYPHENATION_FREQUENCY_NONE
             it.breakStrategy = Layout.BREAK_STRATEGY_SIMPLE
         }
-        textView.text = "HELP"
         val scroll = Zoomable(activity)
         scroll.addView(textView)
         scroll.layoutParams = parameters()

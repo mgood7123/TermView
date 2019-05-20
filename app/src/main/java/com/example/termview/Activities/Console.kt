@@ -7,13 +7,11 @@ import android.os.SystemClock.sleep
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import android.widget.TextView
-import com.example.TermView.ConsoleSession
-import com.example.TermView.ConsoleSessionInit
+import com.example.termview.ConsoleSession
+import com.example.termview.ConsoleSessionInit
 import com.example.termview.R
 import kotlinx.android.synthetic.main.activity_console.*
 import kotlin.concurrent.thread
@@ -31,16 +29,14 @@ class Console : AppCompatActivity() {
         val layout: LinearLayout = LinearLayout(this)
         layout.orientation = LinearLayout.VERTICAL
         popUp.contentView = layout
+        layout.addView(Button(this).also {
+            it.setOnClickListener { popUp.dismiss() }
+            it.text = "dismiss"
+        })
         popUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
         popUp.update(50, 50, 1000, 1000)
-        val console = ConsoleSessionInit(
-            this,
-            lifecycle,
-            layout,
-            ConsoleSession.Stability.STABLE
-        )
+        val console = ConsoleSessionInit(this, layout)
         console.println("onCreate")
-//        popUp.dismiss()
     }
 
     @Suppress("KDocMissingDocumentation")
@@ -94,9 +90,7 @@ class Console : AppCompatActivity() {
         setContentView(R.layout.activity_console)
         console = ConsoleSessionInit(
             this,
-            lifecycle,
-            Terminal,
-            ConsoleSession.Stability.STABLE
+            Terminal
         )
         console?.println("onCreate")
     }
@@ -113,22 +107,11 @@ class Console : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val consoleSession = console!!
-        if (consoleSession.stability == ConsoleSession.Stability.FAST ||
-            consoleSession.stability == ConsoleSession.Stability.NORMAL) {
-            consoleSession.load()
-        }
         console?.println("onResume")
     }
 
     override fun onPause() {
         super.onPause()
-        val consoleSession = console!!
-        if (consoleSession.stability == ConsoleSession.Stability.FAST ||
-            consoleSession.stability == ConsoleSession.Stability.NORMAL) {
-            consoleSession.save()
-            consoleSession.unload()
-        }
         console?.println("onPause")
     }
 
