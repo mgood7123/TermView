@@ -2,17 +2,21 @@
 
 package com.example.termview.Activities
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.SystemClock.sleep
+import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import com.example.termview.ConsoleSession
 import com.example.termview.ConsoleSessionInit
 import com.example.termview.R
+import io.realm.internal.Table
 import kotlinx.android.synthetic.main.activity_console.*
 import kotlin.concurrent.thread
 import kotlin.system.measureTimeMillis
@@ -25,18 +29,7 @@ class Console : AppCompatActivity() {
 
     @Suppress("KDocMissingDocumentation")
     fun clear(@Suppress("UNUSED_PARAMETER") view: View) {
-        val popUp: PopupWindow = PopupWindow(this)
-        val layout: LinearLayout = LinearLayout(this)
-        layout.orientation = LinearLayout.VERTICAL
-        popUp.contentView = layout
-        layout.addView(Button(this).also {
-            it.setOnClickListener { popUp.dismiss() }
-            it.text = "dismiss"
-        })
-        popUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
-        popUp.update(50, 50, 1000, 1000)
-        val console = ConsoleSessionInit(this, layout)
-        console.println("onCreate")
+        popUp(this, 1)
     }
 
     @Suppress("KDocMissingDocumentation")
@@ -88,10 +81,7 @@ class Console : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_console)
-        console = ConsoleSessionInit(
-            this,
-            Terminal
-        )
+        console = ConsoleSessionInit(this, Terminal)
         console?.println("onCreate")
     }
 

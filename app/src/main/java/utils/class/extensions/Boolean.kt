@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package preprocessor.utils.`class`.extensions
+package utils.`class`.extensions
 
 fun <T, R> T.ifTrue(condition:Boolean, code: (condition:T) -> R): R = if (condition) code(this) else this as R
 

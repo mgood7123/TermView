@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package com.example.termview.utils.`class`.extensions
+package utils.`class`.extensions
 
 val Int.second get() = this.seconds
 val Int.seconds get() = this * 1000

@@ -5,7 +5,7 @@ package com.example.termview
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
-import com.utils.`class`.extensions.ThreadWaitForCompletion
+import utils.`class`.extensions.ThreadWaitForCompletion
 import kotlin.concurrent.thread
 
 @Suppress("unused")
@@ -25,7 +25,9 @@ fun scrollDown(activity: Activity, scrollView: Terminal.Zoomable) = thread {
 fun ConsoleSessionInit(activity: Activity, viewGroup: ViewGroup): ConsoleSession {
     val t = Terminal().termView(activity)
     viewGroup.addView(t)
-    return ConsoleSession(activity, t.getChildAt(0) as Terminal.FontFitTextView, t)
+    return ConsoleSession(activity, t.getChildAt(0) as Terminal.FontFitTextView, t).also {
+        it.output.columns = 32
+    }
 }
 
 @Suppress("MemberVisibilityCanBePrivate")

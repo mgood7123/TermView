@@ -1,54 +1,48 @@
 package com.example.termview.Activities
 
-import android.widget.LinearLayout
-import android.view.Gravity
-import android.widget.TextView
-import android.widget.PopupWindow
-import android.os.Bundle
 import android.app.Activity
-import android.content.Context
-import android.view.ViewGroup
-import android.widget.Button
+import android.util.Log
+import android.view.Gravity
+import android.widget.*
+import com.example.termview.ConsoleSession
+import com.example.termview.Terminal
+import utils.Builder
 
+@Suppress("unused")
+fun popUp(activity: Activity, terminals: Int) {
 
-class PopUp : Activity() {
+    // width and height shall be fixed to 1000 pixels
+    val maxWidth = 1000
+    val maxHeight = 1000
 
+    val popUp: PopupWindow = PopupWindow(activity)
+    val layout = AbsoluteLayout(activity)
+    popUp.contentView = layout
+    popUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
+    popUp.update(0, 0, maxWidth, maxHeight)
 
-    public fun onCreate(context: Context) {
-//        super.onCreate(savedInstanceState)
-        lateinit var popUp: PopupWindow
-        lateinit var layout: LinearLayout
-        lateinit var tv: TextView
-        lateinit var params: ViewGroup.LayoutParams
-        lateinit var mainLayout: LinearLayout
-        lateinit var but: Button
-        var click = true
-        popUp = PopupWindow(this)
-        layout = LinearLayout(this)
-        mainLayout = LinearLayout(this)
-        tv = TextView(this)
-        but = Button(this)
-        but.text = "Click Me"
-        but.setOnClickListener {
-            click = if (click) {
-                popUp.showAtLocation(layout, Gravity.BOTTOM, 10, 10)
-                popUp.update(50, 50, 300, 80)
-                false
-            } else {
-                popUp.dismiss()
-                true
-            }
-        }
-        params = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        layout.orientation = LinearLayout.VERTICAL
-        tv.text = "Hi this is a sample text for popup window"
-        layout.addView(tv, params)
-        popUp.contentView = layout
-        // popUp.showAtLocation(layout, Gravity.BOTTOM, 10, 10);
-        mainLayout.addView(but, params)
-        setContentView(mainLayout)
+    val BUILD = Builder(maxHeight, maxWidth)
+
+    BUILD.row(1) {
+        val b = Button(activity)
+        b.setOnClickListener { popUp.dismiss() }
+        b.text = "dismiss"
+        b
     }
+
+    val tableLayout =
+        Builder.ConvertCellsToValidGrid().convertCellsToValidGrid(terminals)!!
+    tableLayout.forEach {
+        Log.e("T", "adding a row with ${it.columns} columns")
+        BUILD.row(it.columns) {
+            val t = Terminal().termView(activity)
+            val console = ConsoleSession(activity, t.getChildAt(0) as Terminal.FontFitTextView, t).also {
+                it.output.columns = 32
+            }
+            console.println("test message")
+            console.println("onCreate")
+            t
+        }
+    }
+    BUILD.build(layout)
 }

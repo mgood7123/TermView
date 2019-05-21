@@ -1,4 +1,4 @@
-package com.utils.`class`.extensions
+package utils.`class`.extensions
 
 import android.content.Context
 

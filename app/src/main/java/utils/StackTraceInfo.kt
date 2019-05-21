@@ -1,9 +1,8 @@
 @file:Suppress("unused")
 
-package com.utils
+package utils
 
 import android.util.Log
-import preprocessor.utils.`class`.extensions.ifConditionReturn
 
 /** Utility class: Getting the name of the current executing method
  * https://stackoverflow.com/questions/442747/getting-the-name-of-the-current-executing-method

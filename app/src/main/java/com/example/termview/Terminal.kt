@@ -13,10 +13,10 @@ import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.ScrollView
 import android.widget.TextView
-import com.utils.StackTraceInfo
-import com.utils.`class`.extensions.ThreadWaitForCompletion
-import com.utils.`class`.extensions.pxToSp
-import preprocessor.utils.`class`.extensions.isLessThan
+import utils.StackTraceInfo
+import utils.`class`.extensions.ThreadWaitForCompletion
+import utils.`class`.extensions.pxToSp
+import utils.`class`.extensions.isLessThan
 import kotlin.concurrent.thread
 
 /**
@@ -57,32 +57,32 @@ class Terminal {
             heightPixels: Int
         ): Paint? {
             if (numCharacters == 0 || numCharacters == 0 || widthPixels == 0 || heightPixels == 0) return null
-            Log.i(com.utils.StackTraceInfo().invokingMethodName, "text: \"$text\"")
+            Log.i(StackTraceInfo().invokingMethodName, "text: \"$text\"")
             var width = paint.measureText(text) * numCharacters / numCharacters
-            Log.i(com.utils.StackTraceInfo().invokingMethodName, "width: $width")
+            Log.i(StackTraceInfo().invokingMethodName, "width: $width")
             var newSize = (widthPixels / width * paint.textSize).toInt().toFloat()
-            Log.i(com.utils.StackTraceInfo().invokingMethodName, "newSize: $newSize")
+            Log.i(StackTraceInfo().invokingMethodName, "newSize: $newSize")
             if (newSize == 0.0f) return null
             paint.textSize = newSize
 
             // remeasure with font size near our desired result
             width = paint.measureText(text) * numCharacters / numCharacters
-            Log.i(com.utils.StackTraceInfo().invokingMethodName, "width: $width")
+            Log.i(StackTraceInfo().invokingMethodName, "width: $width")
             newSize = (widthPixels / width * paint.textSize).toInt().toFloat()
-            Log.i(com.utils.StackTraceInfo().invokingMethodName, "newSize: $newSize")
+            Log.i(StackTraceInfo().invokingMethodName, "newSize: $newSize")
             if (newSize == 0.0f) return null
             paint.textSize = newSize
 
             // Check height constraints
             val metrics = paint.fontMetricsInt
-            Log.i(com.utils.StackTraceInfo().invokingMethodName, "metrics.descent: " + metrics.descent.toString())
-            Log.i(com.utils.StackTraceInfo().invokingMethodName, "metrics.ascent: " + metrics.ascent.toString())
+            Log.i(StackTraceInfo().invokingMethodName, "metrics.descent: " + metrics.descent.toString())
+            Log.i(StackTraceInfo().invokingMethodName, "metrics.ascent: " + metrics.ascent.toString())
             val textHeight = (metrics.descent - metrics.ascent).toFloat()
-            Log.i(com.utils.StackTraceInfo().invokingMethodName, "textHeight: $textHeight")
-            Log.i(com.utils.StackTraceInfo().invokingMethodName, "heightPixels: $heightPixels")
+            Log.i(StackTraceInfo().invokingMethodName, "textHeight: $textHeight")
+            Log.i(StackTraceInfo().invokingMethodName, "heightPixels: $heightPixels")
             if (textHeight > heightPixels) {
                 newSize = (newSize * (heightPixels / textHeight)).toInt().toFloat()
-                Log.i(com.utils.StackTraceInfo().invokingMethodName, "newSize: $newSize")
+                Log.i(StackTraceInfo().invokingMethodName, "newSize: $newSize")
                 if (newSize == 0.0f) return null
                 paint.textSize = newSize
             }
@@ -126,13 +126,13 @@ class Terminal {
         }
 
         override fun append(text: CharSequence?, start: Int, end: Int) {
-//            Log.i(com.utils.StackTraceInfo().invokingMethodName, "appending '$text' to '${this.text}'")
+//            Log.i(utils.StackTraceInfo().invokingMethodName, "appending '$text' to '${this.text}'")
             super.append(text, start, end)
         }
 
         override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
             super.onTextChanged(text, start, lengthBefore, lengthAfter)
-//            Log.i(com.utils.StackTraceInfo().invokingMethodName, "text updated to '$text'")
+//            Log.i(utils.StackTraceInfo().invokingMethodName, "text updated to '$text'")
             DRAWTHREAD()
             // TODO: reformat text due to wrapping and text size in order to wrap correctly
         }
@@ -159,8 +159,8 @@ class Terminal {
 
                 // do scale
                 mScaleFactor *= detector.scaleFactor
-                Log.i(com.utils.StackTraceInfo().currentMethodName, "PREVIOUS $previousMScaleFactor")
-                Log.i(com.utils.StackTraceInfo().currentMethodName, "CURRENT  $mScaleFactor")
+                Log.i(StackTraceInfo().currentMethodName, "PREVIOUS $previousMScaleFactor")
+                Log.i(StackTraceInfo().currentMethodName, "CURRENT  $mScaleFactor")
                 var mode = 0
                 val ZOOM_IN = 1
                 val ZOOM_OUT = 2
@@ -173,44 +173,44 @@ class Terminal {
                 }
                 when (mode) {
                     ZOOM_IN -> {
-                        Log.i(com.utils.StackTraceInfo().currentMethodName, "zooming in")
+                        Log.i(StackTraceInfo().currentMethodName, "zooming in")
                         if (mScaleFactor isLessThan 1f) {
                             mScaleFactor = previousMScaleFactor
                             return false
                         }
                         if (child.columns == 1) {
-                            Log.i(com.utils.StackTraceInfo().currentMethodName, "EXCEEDS")
+                            Log.i(StackTraceInfo().currentMethodName, "EXCEEDS")
                             // Don't let the object exceed maximum scale
                             mScaleFactor = previousMScaleFactor
                             return false
                         } else {
-                            Log.i(com.utils.StackTraceInfo().currentMethodName, "DOES NOT EXCEED")
+                            Log.i(StackTraceInfo().currentMethodName, "DOES NOT EXCEED")
                         }
                     }
                     ZOOM_OUT -> {
-                        Log.i(com.utils.StackTraceInfo().currentMethodName, "zooming out")
+                        Log.i(StackTraceInfo().currentMethodName, "zooming out")
                         if (child.textSize == 1.0f) {
                             mScaleFactor = previousMScaleFactor
                             return false
                         }
                     }
                     ZOOM_NO_CHANGE -> {
-                        Log.i(com.utils.StackTraceInfo().currentMethodName, "no change")
+                        Log.i(StackTraceInfo().currentMethodName, "no change")
                     }
                 }
 
                 child.columns = mScaleFactor.toInt()
 
-                Log.i(com.utils.StackTraceInfo().currentMethodName, "mScaleFactor = $mScaleFactor")
-                Log.i(com.utils.StackTraceInfo().currentMethodName, "new columns are ${child.columns}")
-                Log.i(com.utils.StackTraceInfo().currentMethodName, "SCALED")
+                Log.i(StackTraceInfo().currentMethodName, "mScaleFactor = $mScaleFactor")
+                Log.i(StackTraceInfo().currentMethodName, "new columns are ${child.columns}")
+                Log.i(StackTraceInfo().currentMethodName, "SCALED")
                 requestDisallowInterceptTouchEvent(false)
                 return if (child.DRAW()) {
-                    Log.i(com.utils.StackTraceInfo().currentMethodName, "DRAW RETURNS TRUE")
+                    Log.i(StackTraceInfo().currentMethodName, "DRAW RETURNS TRUE")
                     invalidate()
                     true
                 } else {
-                    Log.i(com.utils.StackTraceInfo().currentMethodName, "DRAW RETURNS FALSE")
+                    Log.i(StackTraceInfo().currentMethodName, "DRAW RETURNS FALSE")
                     mScaleFactor = previousMScaleFactor
                     child.columns = previousColumns
                     false
@@ -220,7 +220,7 @@ class Terminal {
         private val mScaleDetector = ScaleGestureDetector(context, scaleListener)
 
         override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-            Log.i(com.utils.StackTraceInfo().currentMethodName, "CHANGED")
+            Log.i(StackTraceInfo().currentMethodName, "CHANGED")
             val child = getChildAt(0) as FontFitTextView
             child.HEIGHT = h
             child.WIDTH = w

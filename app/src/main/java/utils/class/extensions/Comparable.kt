@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package preprocessor.utils.`class`.extensions
+package utils.`class`.extensions
 
 infix fun <T: Comparable<T>> T.isGreaterThan(i: T) = this > i
 infix fun <T: Comparable<T>> T.isGreaterThanOrEqualTo(i: T) = this >= i
