@@ -9,6 +9,7 @@ import android.view.View
 import com.example.termview.ConsoleSession
 import com.example.termview.ConsoleSessionInit
 import com.example.termview.R
+import com.example.termview.views.widget.popUp
 import kotlinx.android.synthetic.main.activity_console.*
 import kotlin.concurrent.thread
 import kotlin.system.measureTimeMillis

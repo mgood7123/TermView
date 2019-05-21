@@ -1,11 +1,11 @@
-package com.example.termview.activities
+package com.example.termview.views.widget
 
 import android.app.Activity
 import android.util.Log
 import android.view.Gravity
 import android.widget.*
 import com.example.termview.ConsoleSession
-import com.example.termview.Terminal
+import com.example.termview.views.view.Terminal
 import utils.Builder
 
 @Suppress("unused")
@@ -40,7 +40,6 @@ fun popUp(activity: Activity, terminals: Int) {
                 it.output.columns = 32
             }
             console.println("test message")
-            console.println("onCreate")
             t
         }
     }

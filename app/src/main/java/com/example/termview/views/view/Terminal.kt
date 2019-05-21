@@ -1,4 +1,4 @@
-package com.example.termview
+package com.example.termview.views.view
 
 import android.app.Activity
 import android.content.Context

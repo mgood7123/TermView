@@ -5,6 +5,7 @@ package com.example.termview
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
+import com.example.termview.views.view.Terminal
 import utils.`class`.extensions.ThreadWaitForCompletion
 import kotlin.concurrent.thread
 
