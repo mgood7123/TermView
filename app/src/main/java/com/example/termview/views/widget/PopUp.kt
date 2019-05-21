@@ -38,8 +38,8 @@ fun popUp(activity: Activity, terminals: Int) {
             val t = Terminal().termView(activity)
             val console = ConsoleSession(activity, t.getChildAt(0) as Terminal.FontFitTextView, t).also {
                 it.output.columns = 32
+                it.println("test message")
             }
-            console.println("test message")
             t
         }
     }
