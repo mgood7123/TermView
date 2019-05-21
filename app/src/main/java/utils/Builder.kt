@@ -5,7 +5,7 @@ import android.view.View
 import android.widget.AbsoluteLayout
 
 /**
- * constructs a new [View] that fits the specified **maxHeight** and **maxWidth**
+ * constructs a new [View] that fits the specified **maxHeight** and **maxWidth**, in pixels
  *
  * a Builder does not contain any [rows][row] when created to avoid confusing between the user adding a [row] 
  * thinking the Builder contains no [rows][row], and then ending up with 1 extra [row], and vice versa (in which 
@@ -34,7 +34,7 @@ class Builder(val maxHeight: Int, val maxWidth: Int) {
      * [row.size][MutableList.size]
      *
      * @param rowIndex the row number
-     * @param view the [view][View] to attach to this column
+     * @param view the [a.view][View] to attach to this column
      */
     fun column(rowIndex: Int, view: View) {
         if (row.isEmpty() && row.size >= rowIndex) throw ArrayIndexOutOfBoundsException()
@@ -54,7 +54,7 @@ class Builder(val maxHeight: Int, val maxWidth: Int) {
      * this is useful if the same [View] is intended to be used in multiple [columns][column], allowing you to avoid
      * rebuilding the [View] for each [column] manually, eliminating duplicate code
      * 
-     * since a [View] cannot have more than one [parent][View.getParent], it needs to be reconstructed for each view 
+     * since a [View] cannot have more than one [parent][View.getParent], it needs to be reconstructed for each a.view
      * that it wants to be attached to
      *
      * throws [ArrayIndexOutOfBoundsException] if the row is
@@ -82,7 +82,7 @@ class Builder(val maxHeight: Int, val maxWidth: Int) {
      * this is useful if the same [View] is intended to be used in multiple [columns][column], allowing you to avoid
      * rebuilding the [View] for each [column] manually, eliminating duplicate code
      *
-     * since a [View] cannot have more than one [parent][View.getParent], it needs to be reconstructed for each view
+     * since a [View] cannot have more than one [parent][View.getParent], it needs to be reconstructed for each a.view
      * that it wants to be attached to
      *
      */

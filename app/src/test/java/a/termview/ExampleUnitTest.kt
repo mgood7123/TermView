@@ -1,4 +1,4 @@
-package com.example.termview
+package a.termview
 
 import org.junit.Test
 

@@ -1,11 +1,11 @@
-package com.example.termview.views.widget
+package a.termview.views.widget
 
 import android.app.Activity
 import android.util.Log
 import android.view.Gravity
 import android.widget.*
-import com.example.termview.ConsoleSession
-import com.example.termview.views.view.Terminal
+import a.termview.ConsoleSession
+import a.termview.views.view.Terminal
 import utils.Builder
 
 @Suppress("unused")
@@ -37,8 +37,8 @@ fun popUp(activity: Activity, terminals: Int) {
         BUILD.row(it.columns) {
             val t = Terminal().termView(activity)
             val console = ConsoleSession(activity, t.getChildAt(0) as Terminal.FontFitTextView, t).also {
-                it.output.columns = 32
-                it.println("test message")
+                it.output.columns = 13
+                it.print("test message")
             }
             t
         }

@@ -1,15 +1,15 @@
 @file:Suppress("unused")
 
-package com.example.termview.activities
+package a.termview.activities
 
 import android.os.Bundle
 import android.os.SystemClock.sleep
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.example.termview.ConsoleSession
-import com.example.termview.ConsoleSessionInit
-import com.example.termview.R
-import com.example.termview.views.widget.popUp
+import a.termview.ConsoleSession
+import a.termview.ConsoleSessionInit
+import a.termview.R
+import a.termview.views.widget.popUp
 import kotlinx.android.synthetic.main.activity_console.*
 import kotlin.concurrent.thread
 import kotlin.system.measureTimeMillis
@@ -22,7 +22,7 @@ class Console : AppCompatActivity() {
 
     @Suppress("KDocMissingDocumentation")
     fun clear(@Suppress("UNUSED_PARAMETER") view: View) {
-        popUp(this, 1)
+        popUp(this, 4)
     }
 
     @Suppress("KDocMissingDocumentation")
@@ -101,12 +101,12 @@ class Console : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         console?.println("onStop")
-        // this is also called when entering/exiting Pop-Up view on samsung devices
+        // this is also called when entering/exiting Pop-Up a.view on samsung devices
     }
 
     override fun onDestroy() {
         super.onDestroy()
         console?.println("onDestroy")
-        // this is also called when entering/exiting Pop-Up view on samsung devices
+        // this is also called when entering/exiting Pop-Up a.view on samsung devices
     }
 }

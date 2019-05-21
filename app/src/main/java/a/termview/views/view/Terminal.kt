@@ -1,4 +1,4 @@
-package com.example.termview.views.view
+package a.termview.views.view
 
 import android.app.Activity
 import android.content.Context
@@ -150,7 +150,7 @@ class Terminal {
                 // do not allow scrolling during touch event
                 requestDisallowInterceptTouchEvent(true)
 
-                // get text view
+                // get text a.view
                 val child = getChildAt(0) as FontFitTextView
 
                 // set up some restoration values on event of failure
@@ -239,12 +239,12 @@ class Terminal {
     }
 
     /**
-     * creates a new terminal view
+     * creates a new terminal a.view
      *
-     * this is main terminal view function in which will return a terminal suitable for text output
+     * this is main terminal a.view function in which will return a terminal suitable for text output
      *
      * if attached to a scrollable View the Terminal may become inaccessible during resizing,
-     * this is due to the terminal view's requirement of always being accessible during resizing of its text
+     * this is due to the terminal a.view's requirement of always being accessible during resizing of its text
      *
      * @param activity the main UI activity, this is required to resize text in the event that its layout is not yet
      * measurable
