@@ -89,7 +89,7 @@ class Builder(val maxHeight: Int, val maxWidth: Int) {
     fun row(columns: Int, v: () -> View) {
         val i = row.size
         row()
-        (1..columns).forEach {
+        repeat(columns) {
             column(i, v)
         }
     }
@@ -157,9 +157,8 @@ class Builder(val maxHeight: Int, val maxWidth: Int) {
             val GRID = true
             // TODO: add orientation conversions for landscape grid (1x2) and portrait grid (2x1), default is landscape
             if (GRID) {
-                // create an array of integers with an array size equal to cells, these are unused
-                // equivalent to the C for loop: for (int i = 0; i < cells; i++)
-                arrayOfNulls<Int>(cells).forEach {
+                // equivalent to the C for loop: for (int i = 1; i < cells; i++)
+                repeat(cells) {
 
                     val leftoverIsNotInitializedToOne = row[currentRow].leftover != 0
 
