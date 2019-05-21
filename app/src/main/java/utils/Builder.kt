@@ -3,10 +3,6 @@ package utils
 import android.util.Log
 import android.view.View
 import android.widget.AbsoluteLayout
-import utils.`class`.extensions.isGreaterThanOrEqualTo
-import utils.`class`.extensions.isLessThan
-import utils.`class`.extensions.isNotEqualTo
-import java.lang.NullPointerException
 
 /**
  * constructs a new [View] that fits the specified **maxHeight** and **maxWidth**
@@ -41,7 +37,7 @@ class Builder(val maxHeight: Int, val maxWidth: Int) {
      * @param view the [view][View] to attach to this column
      */
     fun column(rowIndex: Int, view: View) {
-        if (row.isEmpty() && row.size isGreaterThanOrEqualTo rowIndex) throw ArrayIndexOutOfBoundsException()
+        if (row.isEmpty() && row.size >= rowIndex) throw ArrayIndexOutOfBoundsException()
         else {
             val c = Column(view)
             c.sizeFromTop = maxHeight

@@ -1,4 +1,4 @@
-package com.example.termview.Activities
+package com.example.termview.activities
 
 import android.app.Activity
 import android.util.Log

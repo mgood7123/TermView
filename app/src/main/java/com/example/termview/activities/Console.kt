@@ -1,22 +1,14 @@
 @file:Suppress("unused")
 
-package com.example.termview.Activities
+package com.example.termview.activities
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.SystemClock.sleep
-import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.PopupWindow
 import com.example.termview.ConsoleSession
 import com.example.termview.ConsoleSessionInit
 import com.example.termview.R
-import io.realm.internal.Table
 import kotlinx.android.synthetic.main.activity_console.*
 import kotlin.concurrent.thread
 import kotlin.system.measureTimeMillis
