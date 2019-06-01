@@ -1,9 +1,9 @@
 package a.termview.views.view
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.support.constraint.ConstraintLayout
 import android.text.Layout
 import android.util.AttributeSet
 import android.util.Log
@@ -14,6 +14,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.ScrollView
 import android.widget.TextView
 import utils.StackTraceInfo
+import utils.UiThread
 import utils.`class`.extensions.ThreadWaitForCompletion
 import utils.`class`.extensions.pxToSp
 import utils.`class`.extensions.isLessThan
@@ -27,27 +28,40 @@ class Terminal {
     /**
      * @sample parameters
      */
-    private fun parameters() = LayoutParams(MATCH_PARENT, MATCH_PARENT)
+    fun parameters(): LayoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
     inner class FontFitTextView : TextView {
 
-        constructor(context: Context) : super(context) {
-            mainThread = context as Activity
+        var AutoFitBasedOnUserCode = false
+
+        var AutoFitCode: () -> Int = { columns }
+
+        var AutoFitDisabled = false
+
+        constructor(UI: UiThread, context: Context) : super(context) {
+            this.UI = UI
         }
 
-        constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-            mainThread = context as Activity
+        constructor(UI: UiThread, context: Context, attrs: AttributeSet) : super(context, attrs) {
+            this.UI = UI
         }
 
         var columns = 80
         var ready = false
         private lateinit var mUpdateThread: Thread
         var mStarted: Boolean = false
-        var mainThread: Activity? = null
+        var UI: UiThread
         var WIDTH = 1440
         var HEIGHT = 2960
         private var WIDTHOLD = 1440
         private var HEIGHTOLD = 2960
+        var hasline = false
+        var reason = 0
+        val reasonSizeZero = 1
+        val reasonWontFit = 2
+        val conditionSizeChange = 1
+        val conditionTextChange = 2
+        val conditionScaling = 3
 
         fun adjustTextSize(
             paint: Paint,
@@ -56,21 +70,34 @@ class Terminal {
             widthPixels: Int,
             heightPixels: Int
         ): Paint? {
+            StackTraceInfo().print()
+            reason = 0
+            Log.i(StackTraceInfo().invokingMethodName, "text: $text")
+            Log.i(StackTraceInfo().invokingMethodName, "numCharacters: $numCharacters")
+            Log.i(StackTraceInfo().invokingMethodName, "heightPixels: $heightPixels")
+            Log.i(StackTraceInfo().invokingMethodName, "widthPixels: $widthPixels")
             if (numCharacters == 0 || numCharacters == 0 || widthPixels == 0 || heightPixels == 0) return null
             Log.i(StackTraceInfo().invokingMethodName, "text: \"$text\"")
             var width = paint.measureText(text) * numCharacters / numCharacters
             Log.i(StackTraceInfo().invokingMethodName, "width: $width")
             var newSize = (widthPixels / width * paint.textSize).toInt().toFloat()
             Log.i(StackTraceInfo().invokingMethodName, "newSize: $newSize")
-            if (newSize == 0.0f) return null
+            if (newSize == 0.0f) {
+                reason = reasonSizeZero
+                return null
+            }
             paint.textSize = newSize
 
             // remeasure with font size near our desired result
             width = paint.measureText(text) * numCharacters / numCharacters
             Log.i(StackTraceInfo().invokingMethodName, "width: $width")
+            Log.i(StackTraceInfo().invokingMethodName, "width per character: ${ width / numCharacters}")
             newSize = (widthPixels / width * paint.textSize).toInt().toFloat()
             Log.i(StackTraceInfo().invokingMethodName, "newSize: $newSize")
-            if (newSize == 0.0f) return null
+            if (newSize == 0.0f) {
+                reason = reasonSizeZero
+                return null
+            }
             paint.textSize = newSize
 
             // Check height constraints
@@ -80,61 +107,111 @@ class Terminal {
             val textHeight = (metrics.descent - metrics.ascent).toFloat()
             Log.i(StackTraceInfo().invokingMethodName, "textHeight: $textHeight")
             Log.i(StackTraceInfo().invokingMethodName, "heightPixels: $heightPixels")
+            Log.i(StackTraceInfo().invokingMethodName, "line count: $lineCount")
+            Log.i(StackTraceInfo().invokingMethodName, "textHeight * lineCount: ${textHeight * lineCount}")
+            if ((textHeight * lineCount) > heightPixels) {
+                reason = reasonWontFit
+                return null
+            }
             if (textHeight > heightPixels) {
                 newSize = (newSize * (heightPixels / textHeight)).toInt().toFloat()
                 Log.i(StackTraceInfo().invokingMethodName, "newSize: $newSize")
-                if (newSize == 0.0f) return null
+                if (newSize == 0.0f) {
+                    reason = reasonSizeZero
+                    return null
+                }
                 paint.textSize = newSize
             }
             return paint
         }
 
-        fun DRAW(): Boolean {
-            if (HEIGHT == 0 || WIDTH == 0 || columns == 0) return false
+        fun DRAW(condition: Int): Boolean {
+            if (!AutoFitDisabled) {
+                if (AutoFitBasedOnUserCode) {
+                    columns = AutoFitCode()
+                }
+            }
+            if (HEIGHT == 0 || WIDTH == 0 || columns == 0 || lineCount == 0) return false
+            StackTraceInfo().print()
             var returnValue = false
-            ThreadWaitForCompletion(mainThread!!) {
+            Log.i(StackTraceInfo().invokingMethodName, "DRAWTHREAD1 condition: $condition")
+            ThreadWaitForCompletion(UI!!) {
+                val Condition = condition
                 var paint: Paint?
+                Log.i(StackTraceInfo().invokingMethodName, "DRAW line count: ${getLineCount()}")
+                Log.i(StackTraceInfo().invokingMethodName, "DRAW line count: $lineCount")
+                Log.i(StackTraceInfo().invokingMethodName, "DRAW has line: $hasline")
+                Log.i(StackTraceInfo().invokingMethodName, "DRAWTHREAD2 condition: $condition")
+                Log.i(StackTraceInfo().invokingMethodName, "DRAWTHREAD2 Condition: $Condition")
+                Log.i(StackTraceInfo().invokingMethodName, "DRAW text: $text")
                 paint = adjustTextSize(getPaint(), " ".repeat(columns), columns, WIDTH, HEIGHT)
+                Log.i(StackTraceInfo().invokingMethodName, "line count: ${getLineCount()}")
                 if (paint == null) {
-                    Log.i(StackTraceInfo().invokingMethodName(4), "rejected $columns")
+                    if (reason == reasonSizeZero) {
+                        Log.i(
+                            StackTraceInfo().invokingMethodName(4),
+                            "rejected $columns: size resulted in 0"
+                        )
+                    } else if (
+                        reason == reasonWontFit &&
+                        (Condition == conditionTextChange || Condition == conditionSizeChange)
+                    ) {
+                        Log.i(
+                            StackTraceInfo().invokingMethodName(4),
+                            "rejected $columns: size will not fit for text $text"
+                        )
+                        AutoFitDisabled = true
+                        columns++
+                        returnValue = DRAW(condition)
+                        AutoFitDisabled = false
+                    }
                 } else {
                     Log.i(StackTraceInfo().invokingMethodName(4), "accepted $columns")
+                    Log.i(StackTraceInfo().invokingMethodName, "line count: ${getLineCount()}")
                     paint.textSize = paint.textSize.pxToSp(this.context)
+                    Log.i(StackTraceInfo().invokingMethodName, "line count: ${getLineCount()}")
                     textSize = paint.textSize
+                    Log.i(StackTraceInfo().invokingMethodName, "line count: ${getLineCount()}")
                     returnValue = true
                 }
             }
             return returnValue
         }
 
-        fun DRAWTHREAD() {
+        fun DRAWTHREAD(condition: Int) {
+            if (text.isEmpty() || condition == 0) return
+            StackTraceInfo().print()
+            Log.i(StackTraceInfo().invokingMethodName, "DRAWTHREAD0 condition: $condition")
             if (!mStarted) {
                 mStarted = true
+                // queue until layout height and width are known
                 mUpdateThread = thread {
                     while (true) {
                         if (ready) {
                             ready = false
-                            DRAW()
+                            Log.i(StackTraceInfo().invokingMethodName, "DRAWTHREAD0 condition: $condition")
+                            DRAW(condition)
                             break
                         }
                         Thread.sleep(16)
                     }
                 }
             } else {
-                DRAW()
+                DRAW(condition)
             }
         }
 
         override fun append(text: CharSequence?, start: Int, end: Int) {
-//            Log.i(utils.StackTraceInfo().invokingMethodName, "appending '$text' to '${this.text}'")
             super.append(text, start, end)
         }
 
         override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
             super.onTextChanged(text, start, lengthBefore, lengthAfter)
-//            Log.i(utils.StackTraceInfo().invokingMethodName, "text updated to '$text'")
-            DRAWTHREAD()
-            // TODO: reformat text due to wrapping and text size in order to wrap correctly
+            Log.i(
+                StackTraceInfo().invokingMethodName,
+                "CALLED FOR TEXT $text with conditionTextChange value of $conditionTextChange"
+            )
+            DRAWTHREAD(conditionTextChange)
         }
     }
 
@@ -205,7 +282,8 @@ class Terminal {
                 Log.i(StackTraceInfo().currentMethodName, "new columns are ${child.columns}")
                 Log.i(StackTraceInfo().currentMethodName, "SCALED")
                 requestDisallowInterceptTouchEvent(false)
-                return if (child.DRAW()) {
+                StackTraceInfo().print()
+                return if (child.DRAW(child.conditionScaling)) {
                     Log.i(StackTraceInfo().currentMethodName, "DRAW RETURNS TRUE")
                     invalidate()
                     true
@@ -225,7 +303,8 @@ class Terminal {
             child.HEIGHT = h
             child.WIDTH = w
             child.ready = true
-            child.DRAWTHREAD()
+            StackTraceInfo().print()
+            child.DRAWTHREAD(child.conditionSizeChange)
             super.onSizeChanged(w, h, oldw, oldh)
         }
 
@@ -235,6 +314,22 @@ class Terminal {
             mScaleDetector.onTouchEvent(ev)
             super.onTouchEvent(ev)
             return true
+        }
+    }
+
+    inner class ConstraintLayoutFontFitTextView : ConstraintLayout {
+        constructor(context: Context) : super(context)
+
+        constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+
+        override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+            Log.i(StackTraceInfo().currentMethodName, "CHANGED")
+            val child = getChildAt(0) as FontFitTextView
+            child.HEIGHT = h
+            child.WIDTH = w
+            child.ready = true
+            child.DRAWTHREAD(child.conditionSizeChange) // this gets called when the layout is ready to be drawn
+            super.onSizeChanged(w, h, oldw, oldh)
         }
     }
 
@@ -252,16 +347,21 @@ class Terminal {
      * @see termViewInit
      */
 
-    internal fun termView(activity: Activity): Zoomable {
-        val textView = FontFitTextView(activity).also {
+    internal fun termView(UI: UiThread, context: Context): Zoomable {
+        val output = FontFitTextView(UI, context).also {
             it.layoutParams = parameters()
             it.setTypeface(Typeface.MONOSPACE, Typeface.BOLD)
             it.hyphenationFrequency = Layout.HYPHENATION_FREQUENCY_NONE
             it.breakStrategy = Layout.BREAK_STRATEGY_SIMPLE
+            it.setTextColor(android.graphics.Color.WHITE)
+            it.isClickable = true
+            it.isFocusable = true
+            it.setTextIsSelectable(true)
         }
-        val scroll = Zoomable(activity)
-        scroll.addView(textView)
-        scroll.layoutParams = parameters()
-        return scroll
+        val screen = Zoomable(context)
+        screen.setBackgroundColor(android.graphics.Color.BLACK)
+        screen.addView(output)
+        screen.layoutParams = parameters()
+        return screen
     }
 }

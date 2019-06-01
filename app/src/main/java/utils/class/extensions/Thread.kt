@@ -1,13 +1,18 @@
 package utils.`class`.extensions
 
 import android.app.Activity
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.Message
+import android.os.Messenger
+import utils.UiThread
 
-fun ThreadWaitForCompletion(activity: Activity, code: () -> Unit) {
+
+fun ThreadWaitForCompletion(UI: UiThread, code: () -> Unit) {
     var CONTINUE = false
-    activity.runOnUiThread {
+    UI.runOnUiThread {
         code()
         CONTINUE = true
     }
     while (!CONTINUE) Thread.sleep(16)
-
 }

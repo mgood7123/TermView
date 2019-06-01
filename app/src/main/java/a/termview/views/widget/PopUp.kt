@@ -5,20 +5,23 @@ import android.util.Log
 import android.view.Gravity
 import android.widget.*
 import a.termview.ConsoleSession
+import a.termview.ConsoleSessionInit
 import a.termview.views.view.Terminal
+import android.os.Handler
 import utils.Builder
+import utils.UiThread
 
 @Suppress("unused")
-fun popUp(activity: Activity, terminals: Int) {
+fun popUp(UI: UiThread, activity: Activity, terminals: Int) {
 
     // width and height shall be fixed to 1000 pixels
     val maxWidth = 1000
     val maxHeight = 1000
-
+    val UI: UiThread = UI
     val popUp: PopupWindow = PopupWindow(activity)
     val layout = AbsoluteLayout(activity)
     popUp.contentView = layout
-    popUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
+    popUp.showAtLocation(layout, Gravity.CENTER, 0, 0)
     popUp.update(0, 0, maxWidth, maxHeight)
 
     val BUILD = Builder(maxHeight, maxWidth)
@@ -35,12 +38,10 @@ fun popUp(activity: Activity, terminals: Int) {
     tableLayout.forEach {
         Log.e("T", "adding a row with ${it.columns} columns")
         BUILD.row(it.columns) {
-            val t = Terminal().termView(activity)
-            val console = ConsoleSession(activity, t.getChildAt(0) as Terminal.FontFitTextView, t).also {
-                it.output.columns = 13
-                it.print("test message")
-            }
-            t
+            val x = ConsoleSessionInit(UI, activity.applicationContext)
+            x.output.columns = 13
+            x.consoleSession.println("test message")
+            x.screen
         }
     }
     BUILD.build(layout)

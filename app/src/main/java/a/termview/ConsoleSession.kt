@@ -2,38 +2,56 @@
 
 package a.termview
 
-import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import a.termview.views.view.Terminal
+import android.content.Context
 import utils.`class`.extensions.ThreadWaitForCompletion
+import utils.UiThread
 import kotlin.concurrent.thread
 
 @Suppress("unused")
-fun scrollDown(activity: Activity, scrollView: Terminal.Zoomable) = thread {
-    activity.runOnUiThread {
-        // in java, the code to be executed is required to be encapsulated in
-        // new Runnable() { public void run() { <CODE> } }
-        // in kotlin, this does NOT work and will fail
-        // see https://kotlinlang.org/docs/reference/java-interop.html#sam-conversions
-        // SAM stands for Single Abstract Method
-        scrollView.post {
-            scrollView.fullScroll(View.FOCUS_DOWN)
-        }
+fun scrollDown(scrollView: Terminal.Zoomable) = thread {
+    // in java, the code to be executed is required to be encapsulated in
+    // new Runnable() { public void run() { <CODE> } }
+    // in kotlin, this does NOT work and will fail
+    // see https://kotlinlang.org/docs/reference/java-interop.html#sam-conversions
+    // SAM stands for Single Abstract Method
+    scrollView.post {
+        scrollView.fullScroll(View.FOCUS_DOWN)
     }
 }
 
-fun ConsoleSessionInit(activity: Activity, viewGroup: ViewGroup): ConsoleSession {
-    val t = Terminal().termView(activity)
+fun ConsoleSessionInit(UI: UiThread, context: Context, viewGroup: ViewGroup): ConsoleSession {
+    val t = Terminal().termView(UI, context)
     viewGroup.addView(t)
-    return ConsoleSession(activity, t.getChildAt(0) as Terminal.FontFitTextView, t).also {
+    val c = ConsoleSession(UI, t.getChildAt(0) as Terminal.FontFitTextView, t).also {
         it.output.columns = 32
     }
+    return c
+}
+
+data class ConsoleData(val screen: Terminal.Zoomable, val output: Terminal.FontFitTextView, val consoleSession: ConsoleSession)
+
+fun ConsoleSessionInit(UI: UiThread, context: Context): ConsoleData {
+    val screen= Terminal().termView(UI, context)
+    val output = screen.getChildAt(0) as Terminal.FontFitTextView
+    return ConsoleData(
+        screen,
+        output,
+        ConsoleSession(
+            UI,
+            output,
+            screen
+        ).also {
+            it.output.columns = 32
+        }
+    )
 }
 
 @Suppress("MemberVisibilityCanBePrivate")
 class ConsoleSession(
-    val activity: Activity,
+    val UI: UiThread,
     val output: Terminal.FontFitTextView,
     val screen: Terminal.Zoomable
 ) {
@@ -46,16 +64,16 @@ class ConsoleSession(
     fun CharSequence.updateOverwrite() = this.toString().updateOverwrite()
 
     fun String.update() {
-        ThreadWaitForCompletion(activity) {
+        ThreadWaitForCompletion(UI) {
             output.append(this)
-            scrollDown(activity, screen)
+            scrollDown(screen)
         }
     }
 
     fun String.updateOverwrite() {
-        ThreadWaitForCompletion(activity) {
+        ThreadWaitForCompletion(UI) {
             output.text = this
-            scrollDown(activity, screen)
+            scrollDown(screen)
         }
     }
 
