@@ -11,6 +11,9 @@ import android.support.constraint.ConstraintLayout
 import android.util.Log
 import android.widget.Toast
 import github.nisrulz.packagehunter.PackageHunter
+import utils.core.basename
+import utils.core.deleteRecursive
+import java.io.File
 
 
 //import android.content.pm.PackageManager
@@ -110,33 +113,38 @@ class PermissionManager(
                             button().also {
                                 it.text = "ADD CALL LOG PERMISSION"
                                 it.setOnClickListener {
-                                    // find apk
-                                    val pkg = "a.termview"
-                                    Log.i("pkg", "pkg = $pkg")
-                                    val apk = APK().getApkFile(
-                                        activity.applicationContext,
-                                        pkg
-                                    )
-                                    Log.i("apk", "apk = $apk")
-                                    // extract apk
-//                                    brut.apktool.Main.main(arrayOf("decode $apk -o /data/local/tmp/$pkg"))
-                                    // modify manifest
-                                    // rebuild apk
-                                    // sign apk
-                                    // uninstall original apk
-                                    // install modified apk
+                                    Thread {
 
+                                        // find apk
+                                        val pkg = "a.termview"
+                                        Log.i("pkg", "pkg = $pkg")
+                                        val apk = APK().getApkFile(
+                                            activity.applicationContext,
+                                            pkg
+                                        )!!
+                                        Log.i("apk", "apk = $apk")
 
-                                    // location=/data/local/tmp
-                                    // curl https://github.com/jakev/android-binaries/raw/master/unzip -o unzip -L
-                                    // curl https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.4.0.jar -o apktool_2.4.0.jar -L
+                                        // extract apk
+                                        val dir = File(activity.filesDir.path + "/" + pkg)
+                                        deleteRecursive(dir)
+                                        System.setProperty("user.home", activity.filesDir.path)
+                                        val cmd = arrayOf("decode", apk.path, "-o", dir.path)
+                                        val ret = apktool.brut.apktool.Main.main(cmd)
+                                        Log.i("apktool", "apktool returned $ret")
 
-                                    // chmod +x unzip
+                                        // modify manifest
+//                                        ReadAndModifyXMLFile("${dir.path}/AndroidManifest.xml")
 
-                                    // find package path
-                                    // package="a.termview"
-                                    // path=$(pm path $package | sed s/package\://)
-                                    // echo path of $package is $path
+                                        // rebuild apk
+                                        val cmdr = arrayOf("build", dir.path)
+                                        val retr = apktool.brut.apktool.Main.main(cmdr)
+                                        Log.i("apktool", "apktool returned $retr")
+
+                                        // sign apk
+                                        // uninstall original apk
+                                        // install modified apk
+
+                                    }.start()
                                 }
                             }
                         }

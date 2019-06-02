@@ -1,1 +1,1 @@
-include ':app', ':TermViewUpdateSpeedBenchmark', ':benchmark', ':benchmark', ':benchmark', ':apktool_2.4.0'
+include ':app', ':TermViewUpdateSpeedBenchmark', ':benchmark', ':benchmark', ':benchmark', ':apktool_2.4.0', ':brut.j.dir', ':brut.j.common', ':brut.apktool:apktool-lib', ':brut.j.util', ':brut.apktool:apktool-cli'

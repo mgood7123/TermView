@@ -12,6 +12,12 @@
             <option value="$PROJECT_DIR$/apktool_2.4.0" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/benchmark" />
+            <option value="$PROJECT_DIR$/brut.apktool" />
+            <option value="$PROJECT_DIR$/brut.apktool/apktool-cli" />
+            <option value="$PROJECT_DIR$/brut.apktool/apktool-lib" />
+            <option value="$PROJECT_DIR$/brut.j.common" />
+            <option value="$PROJECT_DIR$/brut.j.dir" />
+            <option value="$PROJECT_DIR$/brut.j.util" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
