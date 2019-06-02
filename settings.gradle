@@ -1,1 +1,1 @@
-include ':app', ':TermViewUpdateSpeedBenchmark', ':benchmark', ':benchmark', ':benchmark'
+include ':app', ':TermViewUpdateSpeedBenchmark', ':benchmark', ':benchmark', ':benchmark', ':apktool_2.4.0'

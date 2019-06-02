@@ -3,12 +3,53 @@ package utils
 import a.termview.views.view.Terminal
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.Uri
 import android.provider.Settings
 import android.support.constraint.ConstraintLayout
 import android.util.Log
 import android.widget.Toast
+import github.nisrulz.packagehunter.PackageHunter
+
+
+//import android.content.pm.PackageManager
+//import org.xmlpull.v1.XmlPullParserException
+//import sun.security.pkcs11.wrapper.Functions.getAttributeName
+//import org.xmlpull.v1.XmlPullParser
+//import android.content.res.XmlResourceParser
+//import sun.invoke.util.VerifyAccess.getPackageName
+//import android.content.res.AssetManager
+//fun getListOfPermissions(context: Context): String {
+//    var _permissions = ""
+//
+//    try {
+//        val _am = context.createPackageContext(context.getPackageName(), 0).getAssets()
+//        val _xmlParser = _am.openXmlResourceParser(0, "AndroidManifest.xml")
+//        var _eventType = _xmlParser.getEventType()
+//        while (_eventType != XmlPullParser.END_DOCUMENT) {
+//            if (_eventType == XmlPullParser.START_TAG && "uses-permission" == _xmlParser.getName()) {
+//                for (i in 0 until _xmlParser.getAttributeCount()) {
+//                    if (_xmlParser.getAttributeName(i) == "name") {
+//                        _permissions += _xmlParser.getAttributeValue(i) + "\n"
+//                    }
+//                }
+//            }
+//            _eventType = _xmlParser.nextToken()
+//        }
+//        _xmlParser.close() // Pervents memory leak.
+//    } catch (exception: XmlPullParserException) {
+//        exception.printStackTrace()
+//    } catch (exception: PackageManager.NameNotFoundException) {
+//        exception.printStackTrace()
+//    } catch (exception: IOException) {
+//        exception.printStackTrace()
+//    }
+//
+//    return _permissions
+//}
+
+
 
 class PermissionManager(
     private val activity: Activity
@@ -64,6 +105,41 @@ class PermissionManager(
                         }
                     )
                     UI
+                        .row()
+                        .column {
+                            button().also {
+                                it.text = "ADD CALL LOG PERMISSION"
+                                it.setOnClickListener {
+                                    // find apk
+                                    val pkg = "a.termview"
+                                    Log.i("pkg", "pkg = $pkg")
+                                    val apk = APK().getApkFile(
+                                        activity.applicationContext,
+                                        pkg
+                                    )
+                                    Log.i("apk", "apk = $apk")
+                                    // extract apk
+//                                    brut.apktool.Main.main(arrayOf("decode $apk -o /data/local/tmp/$pkg"))
+                                    // modify manifest
+                                    // rebuild apk
+                                    // sign apk
+                                    // uninstall original apk
+                                    // install modified apk
+
+
+                                    // location=/data/local/tmp
+                                    // curl https://github.com/jakev/android-binaries/raw/master/unzip -o unzip -L
+                                    // curl https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.4.0.jar -o apktool_2.4.0.jar -L
+
+                                    // chmod +x unzip
+
+                                    // find package path
+                                    // package="a.termview"
+                                    // path=$(pm path $package | sed s/package\://)
+                                    // echo path of $package is $path
+                                }
+                            }
+                        }
                         .row()
                         .column {
                             button().also {
@@ -263,10 +339,11 @@ class PermissionManager(
                                     it.setOnClickListener { _ ->
                                         Toast.makeText(
                                             activity.applicationContext,
-                                            "grant permission ${currentPermission.name} " +
+                                            "attempting to grant permission ${currentPermission.name} " +
                                                     "lineCount is ${(it.currentView as X).output.lineCount}",
                                             Toast.LENGTH_LONG
                                         ).show()
+                                        request(currentPermission.name, 123)
                                     }
                                 }
                             }
@@ -277,22 +354,41 @@ class PermissionManager(
                 }
         }
 
-        fun request(permission: String, id: Int) {
-            val permissionArray = permission.split('.')
+        private fun stage1(permission: String, id: Int, permissionArray: List<String>) {
             when (permissionArray[0]) {
-                "android" -> when (permissionArray[1]) {
-                    "permission", "permission-group" -> activity.requestPermissions(arrayOf(permission), id)
-                    "settings" -> when (permissionArray[2]) {
-                        "action" -> {
-                            val URI = Uri.parse("package:${activity.packageName}")
-                            activity.startActivityForResult(Intent(permission, URI), 1)
-                        }
-                        else -> throw Exception("request: Unknown permission type: ${permissionArray[2]}")
-                    }
-                    else -> throw Exception("request: Unknown permission type: ${permissionArray[1]}")
-                }
-                else -> throw Exception("request: Unknown permission type: ${permissionArray[0]}")
+                "android", "com" -> stage2(permission, id, permissionArray)
+                else -> throw Exception("request: Unknown permission type: ${permissionArray[0]} ($permission)")
             }
+        }
+
+        private fun stage2(permission: String, id: Int, permissionArray: List<String>) {
+            when (permissionArray[1]) {
+                "permission", "permission-group" -> activity.requestPermissions(arrayOf(permission), id)
+                "settings", "android" -> stage3(permission, id, permissionArray)
+                else -> throw Exception("request: Unknown permission type: ${permissionArray[1]} ($permission)")
+            }
+        }
+
+        private fun stage3(permission: String, id: Int, permissionArray: List<String>) {
+            when (permissionArray[2]) {
+                "action" -> {
+                    val URI = Uri.parse("package:${activity.packageName}")
+                    activity.startActivityForResult(Intent(permission, URI), 1)
+                }
+                "launcher", "alarm", "voicemail" -> stage4(permission, id, permissionArray)
+                else -> throw Exception("request: Unknown permission type: ${permissionArray[2]} ($permission)")
+            }
+        }
+
+        private fun stage4(permission: String, id: Int, permissionArray: List<String>) {
+            when (permissionArray[3]) {
+                "permission", "permission-group" -> activity.requestPermissions(arrayOf(permission), id)
+                else -> throw Exception("request: Unknown permission type: ${permissionArray[3]} ($permission)")
+            }
+        }
+
+        fun request(permission: String, id: Int) {
+            stage1(permission, id, permission.split('.'))
         }
 
         fun requestAllRemaining(): Boolean {
@@ -313,13 +409,13 @@ class PermissionManager(
                     "settings" -> when (permissionArray[2]) {
                         "action" -> when (permissionArray[3]) {
                             "MANAGE_OVERLAY_PERMISSION" -> Settings.canDrawOverlays(activity.applicationContext)
-                            else -> throw Exception("check: Unknown permission: ${permissionArray[3]}")
+                            else -> throw Exception("check: Unknown permission: ${permissionArray[3]} ($permission)")
                         }
-                        else -> throw Exception("check: Unknown permission type: ${permissionArray[2]}")
+                        else -> throw Exception("check: Unknown permission type: ${permissionArray[2]} ($permission)")
                     }
-                    else -> throw Exception("check: Unknown permission type: ${permissionArray[1]}")
+                    else -> throw Exception("check: Unknown permission type: ${permissionArray[1]} ($permission)")
                 }
-                else -> throw Exception("check: Unknown permission type: ${permissionArray[0]}")
+                else -> throw Exception("check: Unknown permission type: ${permissionArray[0]} ($permission)")
             }
         }
 
@@ -329,6 +425,15 @@ class PermissionManager(
             }
             return true
         }
+
+        fun getpermissions(pkg: String) {
+            val ph = PackageHunter(activity.applicationContext)
+            val pkgprm = ph.getPermissionForPkg(pkg)
+            pkgprm.forEach {
+                Log.i("pkgprm", "pkgprm contains $it")
+            }
+        }
+
     }
 }
 

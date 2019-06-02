@@ -70,7 +70,6 @@ class Terminal {
             widthPixels: Int,
             heightPixels: Int
         ): Paint? {
-            StackTraceInfo().print()
             reason = 0
             Log.i(StackTraceInfo().invokingMethodName, "text: $text")
             Log.i(StackTraceInfo().invokingMethodName, "numCharacters: $numCharacters")
@@ -132,7 +131,6 @@ class Terminal {
                 }
             }
             if (HEIGHT == 0 || WIDTH == 0 || columns == 0 || lineCount == 0) return false
-            StackTraceInfo().print()
             var returnValue = false
             Log.i(StackTraceInfo().invokingMethodName, "DRAWTHREAD1 condition: $condition")
             ThreadWaitForCompletion(UI!!) {
@@ -180,7 +178,6 @@ class Terminal {
 
         fun DRAWTHREAD(condition: Int) {
             if (text.isEmpty() || condition == 0) return
-            StackTraceInfo().print()
             Log.i(StackTraceInfo().invokingMethodName, "DRAWTHREAD0 condition: $condition")
             if (!mStarted) {
                 mStarted = true
@@ -282,7 +279,6 @@ class Terminal {
                 Log.i(StackTraceInfo().currentMethodName, "new columns are ${child.columns}")
                 Log.i(StackTraceInfo().currentMethodName, "SCALED")
                 requestDisallowInterceptTouchEvent(false)
-                StackTraceInfo().print()
                 return if (child.DRAW(child.conditionScaling)) {
                     Log.i(StackTraceInfo().currentMethodName, "DRAW RETURNS TRUE")
                     invalidate()
@@ -303,7 +299,6 @@ class Terminal {
             child.HEIGHT = h
             child.WIDTH = w
             child.ready = true
-            StackTraceInfo().print()
             child.DRAWTHREAD(child.conditionSizeChange)
             super.onSizeChanged(w, h, oldw, oldh)
         }
