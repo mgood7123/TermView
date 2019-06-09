@@ -2,16 +2,15 @@ package a.termview.floating.hover
 
 import a.termview.ConsoleData
 import a.termview.ConsoleSessionInit
-import android.Manifest
 import android.content.Context
 import android.os.Environment.getExternalStorageDirectory
 import android.view.View
 import android.widget.AbsoluteLayout
 import android.widget.Button
 import io.mattcarroll.hover.Content
-import utils.Builder
-import utils.PermissionManager
-import utils.UiThread
+import com.example.liblayout.Builder
+import com.example.libperm.PermissionManager
+import com.example.liblayout.UiThread
 import java.io.File
 
 class NonFullscreenContent(val UI: UiThread) : Content { // DemoHoverMenu

@@ -8,16 +8,11 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/TermViewUpdateSpeedBenchmark" />
-            <option value="$PROJECT_DIR$/apktool_2.4.0" />
+            <option value="$PROJECT_DIR$/apktool" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/benchmark" />
-            <option value="$PROJECT_DIR$/brut.apktool" />
-            <option value="$PROJECT_DIR$/brut.apktool/apktool-cli" />
-            <option value="$PROJECT_DIR$/brut.apktool/apktool-lib" />
-            <option value="$PROJECT_DIR$/brut.j.common" />
-            <option value="$PROJECT_DIR$/brut.j.dir" />
-            <option value="$PROJECT_DIR$/brut.j.util" />
+            <option value="$PROJECT_DIR$/liblayout" />
+            <option value="$PROJECT_DIR$/libperm" />
+            <option value="$PROJECT_DIR$/libutils" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

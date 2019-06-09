@@ -16,8 +16,6 @@
 
 package com.karumi.dexter.sample
 
-import a.termview.R
-import android.Manifest
 import android.Manifest.permission.*
 import android.app.Activity
 import android.os.Bundle
@@ -26,8 +24,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import kotlinx.android.synthetic.main.sample_activity.*
-import utils.Builder
-import utils.PermissionManager
+import com.example.liblayout.Builder
+import com.example.libperm.PermissionManager
 
 
 /**
@@ -60,7 +58,7 @@ class SampleActivity : Activity() {
 //            .Permissions(WRITE_EXTERNAL_STORAGE)
 //            .GUI()
 //            .make
-        val UI = Builder(this)
+        val UI = com.example.liblayout.Builder(this)
         UI.row(4) { Button(this) }
         UI.build()
     }

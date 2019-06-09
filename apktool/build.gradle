@@ -1,0 +1,39 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+
+    defaultConfig {
+        minSdkVersion 26
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation 'org.smali:baksmali:2.2.7'
+    implementation 'commons-cli:commons-cli:1.4'
+    implementation 'commons-io:commons-io:2.4'
+    implementation 'org.apache.commons:commons-lang3:3.1'
+    implementation 'com.google.guava:guava:14.0'
+    implementation 'junit:junit:4.12'
+    implementation 'net.sf.proguard:proguard-gradle:6.1.0'
+    implementation 'org.yaml:snakeyaml:1.18:android'
+    implementation 'org.smali:smali:2.2.7'
+    implementation 'xpp3:xpp3:1.1.4c'
+    implementation 'xmlunit:xmlunit:1.6'
+    implementation project(":libutils")
+}

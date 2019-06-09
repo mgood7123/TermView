@@ -8,10 +8,8 @@ import android.view.ContextThemeWrapper
 import io.mattcarroll.hover.HoverMenu
 import io.mattcarroll.hover.HoverView
 import io.mattcarroll.hover.window.HoverMenuService
-import android.os.Handler
 import android.widget.Toast
-import utils.UiThread
-import utils.`class`.extensions.second
+import com.example.liblayout.UiThread
 
 
 class DemoHoverMenuService : HoverMenuService() {

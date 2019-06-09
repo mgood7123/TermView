@@ -4,10 +4,10 @@ package a.termview
 
 import android.view.View
 import android.view.ViewGroup
-import a.termview.views.view.Terminal
 import android.content.Context
-import utils.`class`.extensions.ThreadWaitForCompletion
-import utils.UiThread
+import com.example.libutils.extensions.ThreadWaitForCompletion
+import com.example.liblayout.UiThread
+import com.example.libperm.Terminal
 import kotlin.concurrent.thread
 
 @Suppress("unused")

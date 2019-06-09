@@ -1,6 +1,7 @@
 package a.termview.activities
 
 
+import a.termview.R
 import a.termview.floating.hover.DemoHoverMenuService
 import android.app.Activity
 import android.content.Intent
@@ -8,25 +9,30 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
+import com.example.libperm.PermissionManagerActivity
 import com.github.johnkal.appcrashhandlerlibrary.AppCrashHandler
+import java.lang.Thread.setDefaultUncaughtExceptionHandler
 
-val IDE_DEBUGGING = true
+/**
+ * set to false to allow crashes to be handled by AppCrashHandler
+ */
+const val IDE_DEBUGGING: Boolean = true
 
 class ConsoleV2 : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!IDE_DEBUGGING) Thread.setDefaultUncaughtExceptionHandler(
+        if (!IDE_DEBUGGING) setDefaultUncaughtExceptionHandler(
             AppCrashHandler.Builder()
                 .setActivity(this)
                 .setTitle("Error")
                 .setDescription("An error occured. Do you want to send report to developer?")
-                .setBackgroundColor(a.termview.R.color.background_material_dark)
-                .setTitleColor(a.termview.R.color.white)
-                .setDescriptionColor(a.termview.R.color.white)
-                .setIcon(a.termview.R.drawable.ic_bug_report_black_24dp)
-                .setPositiveText(a.termview.R.string.send)
-                .setNegativeText(a.termview.R.string.cancel)
+                .setBackgroundColor(R.color.background_material_dark)
+                .setTitleColor(R.color.white)
+                .setDescriptionColor(R.color.white)
+                .setIcon(R.drawable.ic_bug_report_black_24dp)
+                .setPositiveText(R.string.send)
+                .setNegativeText(R.string.cancel)
                 .setTakeScreenshot(false)
                 .setEmailTo("smallville7123@gmail.com")
                 .setEmailSubject("App Crash")

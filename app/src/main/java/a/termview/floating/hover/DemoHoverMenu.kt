@@ -17,12 +17,9 @@ package a.termview.floating.hover
 
 import a.termview.R
 import android.content.Context
-import android.content.res.Resources
 import android.view.View
 import io.mattcarroll.hover.HoverMenu
-import utils.UiThread
-
-import java.util.Collections
+import com.example.liblayout.UiThread
 
 /**
  * A HoverMenu provides the Sections that are displayed in the HoverMenuView. Each Section has an
@@ -31,12 +28,12 @@ import java.util.Collections
 class DemoHoverMenu(UI: UiThread, private val mMenuId: String) : HoverMenu() { // DemoHoverMenuService
 
     private val mContext: Context
-    private val mSection: HoverMenu.Section
+    private val mSection: Section
 
     init {
         mContext = UI.context.applicationContext
-        mSection = HoverMenu.Section(
-            HoverMenu.SectionId("0"),
+        mSection = Section(
+            SectionId("0"),
             createTabView(),
             NonFullscreenContent(UI)
         )
@@ -54,15 +51,15 @@ class DemoHoverMenu(UI: UiThread, private val mMenuId: String) : HoverMenu() { /
         return 1
     }
 
-    override fun getSection(index: Int): HoverMenu.Section? {
+    override fun getSection(index: Int): Section? {
         return mSection
     }
 
-    override fun getSection(sectionId: HoverMenu.SectionId): HoverMenu.Section? {
+    override fun getSection(sectionId: SectionId): Section? {
         return mSection
     }
 
-    override fun getSections(): List<HoverMenu.Section> {
+    override fun getSections(): List<Section> {
         return listOf(mSection)
     }
 }
