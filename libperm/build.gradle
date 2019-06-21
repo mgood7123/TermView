@@ -2,12 +2,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 android {
-    compileSdkVersion 29
+    compileSdkVersion 28
 
 
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -15,7 +15,7 @@ android {
         consumerProguardFiles 'consumer-rules.pro'
     }
 
-    buildToolsVersion = '29.0.0 rc3'
+    buildToolsVersion = '28.0.3'
     buildTypes {
         release {
             minifyEnabled false
@@ -35,5 +35,5 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.github.nisrulz:packagehunter:1.1.5'
     implementation project(":libutils")
-    compile project(path: ':liblayout')
+    implementation project(path: ':liblayout')
 }

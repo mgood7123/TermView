@@ -1,5 +1,6 @@
 package com.example.libperm
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -43,6 +44,14 @@ class Terminal {
         }
 
         constructor(UI: UiThread, context: Context, attrs: AttributeSet) : super(context, attrs) {
+            this.UI = UI
+        }
+
+        constructor(UI: UiThread, context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+            this.UI = UI
+        }
+
+        constructor(UI: UiThread, context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
             this.UI = UI
         }
 
@@ -217,6 +226,10 @@ class Terminal {
 
         constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
+        constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+
+        constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
+
         private var mScaleFactor = 1f
         private val scaleListener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
@@ -316,6 +329,8 @@ class Terminal {
         constructor(context: Context) : super(context)
 
         constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+
+        constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
         override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
             Log.i(StackTraceInfo().currentMethodName, "CHANGED")

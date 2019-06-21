@@ -125,8 +125,11 @@ This permission protects access to the TelecomManager.acceptHandover(Uri, int, P
             protectionLevelDangerous
         )
         add(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            else "android.permission.ACCESS_BACKGROUND_LOCATION",
+            // Android Q SDK not released
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+//                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+//            else
+                "android.permission.ACCESS_BACKGROUND_LOCATION",
             29,
             null,
             """Allows an app to access location in the background. If you are requesting this, you should also request ACCESS_FINE_LOCATION. Requesting this by itself is not sufficient to give you location access. """,
@@ -163,8 +166,11 @@ Not for use by third-party applications.""",
             protectionLevelNormal
         )
         add(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Manifest.permission.ACCESS_MEDIA_LOCATION
-            else "android.permission.ACCESS_MEDIA_LOCATION",
+            // Android Q SDK not released
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+//                Manifest.permission.ACCESS_MEDIA_LOCATION
+//            else
+                "android.permission.ACCESS_MEDIA_LOCATION",
             29,
             null,
             """Allows an application to access any geographic locations persisted in the user's shared collection.""",
@@ -199,8 +205,11 @@ Not for use by third-party applications.""",
             protectionLevelNone
         )
         add(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Manifest.permission.ACTIVITY_RECOGNITION
-            else "android.permission.ACTIVITY_RECOGNITION",
+            // Android Q SDK not released
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+//                Manifest.permission.ACTIVITY_RECOGNITION
+//            else
+                "android.permission.ACTIVITY_RECOGNITION",
             29,
             null,
             """Allows an application to recognize physical activity. """,
@@ -249,8 +258,11 @@ Not for use by third-party applications.""",
             protectionLevelSignature
         )
         add(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Manifest.permission.BIND_CALL_REDIRECTION_SERVICE
-            else "android.permission.BIND_CALL_REDIRECTION_SERVICE",
+            // Android Q SDK not released
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+//                Manifest.permission.BIND_CALL_REDIRECTION_SERVICE
+//            else
+                "android.permission.BIND_CALL_REDIRECTION_SERVICE",
             29,
             null,
             """Must be required by a CallRedirectionService, to ensure that only the system can bind to it. """,
@@ -258,8 +270,11 @@ Not for use by third-party applications.""",
             protectionLevelPrivileged
         )
         add(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Manifest.permission.BIND_CARRIER_MESSAGING_CLIENT_SERVICE
-            else "android.permission.BIND_CARRIER_MESSAGING_CLIENT_SERVICE",
+            // Android Q SDK not released
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+//                Manifest.permission.BIND_CARRIER_MESSAGING_CLIENT_SERVICE
+//            else
+                "android.permission.BIND_CARRIER_MESSAGING_CLIENT_SERVICE",
             29,
             null,
             """A subclass of CarrierMessagingClientService must be protected with this permission.""",
@@ -495,8 +510,11 @@ Not for use by third-party applications.""",
             protectionLevelNone
         )
         add(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Manifest.permission.CALL_COMPANION_APP
-            else "android.permission.CALL_COMPANION_APP",
+            // Android Q SDK not released
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+//                Manifest.permission.CALL_COMPANION_APP
+//            else
+                "android.permission.CALL_COMPANION_APP",
             29,
             null,
             """Allows an app which implements the InCallService API to be eligible to be enabled as a calling companion app. This means that the Telecom framework will bind to the app's InCallService implementation when there are calls active. The app can use the InCallService API to view information about calls on the system and control these calls. """,
@@ -1026,8 +1044,11 @@ Not for use by third-party applications.""", protectionLevelNone
             protectionLevelSignature
         )
         add(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Manifest.permission.REQUEST_PASSWORD_COMPLEXITY
-            else "android.permission.REQUEST_PASSWORD_COMPLEXITY",
+            // Android Q SDK not released
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+//                Manifest.permission.REQUEST_PASSWORD_COMPLEXITY
+//            else
+                "android.permission.REQUEST_PASSWORD_COMPLEXITY",
             29,
             null,
             """Allows an application to request the screen lock complexity and prompt users to update the screen lock to a certain complexity level. """,
@@ -1126,8 +1147,11 @@ Not for use by third-party applications.""",
             protectionLevelNone
         )
         add(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Manifest.permission.SMS_FINANCIAL_TRANSACTIONS
-            else "android.permission.SMS_FINANCIAL_TRANSACTIONS",
+            // Android Q SDK not released
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+//                Manifest.permission.SMS_FINANCIAL_TRANSACTIONS
+//            else
+                "android.permission.SMS_FINANCIAL_TRANSACTIONS",
             29,
             null,
             """Allows financial apps to read filtered sms messages.""",
@@ -1181,8 +1205,11 @@ Applications should request USE_BIOMETRIC instead
 Allows an app to use fingerprint hardware. """, protectionLevelNormal
         )
         add(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Manifest.permission.USE_FULL_SCREEN_INTENT
-            else "android.permission.USE_FULL_SCREEN_INTENT",
+            // Android Q SDK not released
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+//                Manifest.permission.USE_FULL_SCREEN_INTENT
+//            else
+                "android.permission.USE_FULL_SCREEN_INTENT",
             29,
             null,
             """Required for apps targeting Build.VERSION_CODES.Q that want to use notification full screen intents.""",

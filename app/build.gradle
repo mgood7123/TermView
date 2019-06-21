@@ -15,7 +15,7 @@ configurations.all {
 }
 
 android {
-    compileSdkVersion 'android-Q'
+    compileSdkVersion 28
     defaultConfig {
         applicationId "a.termview"
         minSdkVersion 28
@@ -30,7 +30,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    buildToolsVersion = '29.0.0 rc3'
+    buildToolsVersion = '28.0.3'
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

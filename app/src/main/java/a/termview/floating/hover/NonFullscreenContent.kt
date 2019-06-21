@@ -85,7 +85,6 @@ class NonFullscreenContent(val UI: UiThread) : Content { // DemoHoverMenu
                     UI.DATA.add(0)
                     x.output.columns = 30
                     x.screen
-
                 }
                 BUILD.build()
             }
